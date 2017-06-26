@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="elements/customer-list-member.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-customer-list">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+    
+    <style is="custom-style">
+      paper-button {
+	  font-family: 'Roboto', 'Noto', sans-serif;
+	  font-weight: normal;
+	  font-size: 14px;
+	  -webkit-font-smoothing: antialiased;
+      }
+      paper-button.indigo {
+	  background-color: var(--paper-indigo-500);
+	  color: white;
+	  --paper-button-raised-keyboard-focus: {
+	      background-color: var(--paper-pink-a200) !important;
+	      color: white !important;
+	  };
+      }
+      paper-button.indigo:hover {
+	  background-color: var(--paper-indigo-400);
+      }
+    </style>
+    <app-location route="{{route}}"></app-location>
+    <div class="card">
+      <div class="circle">Signup</div>
+      <div>
+	<customer-list-member route="{{route}}"></customer-list-member>
+      </div>
+      <div>
+	<paper-button class="indigo" on-click="_goCustomerAdd">Add Customer</paper-button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class MyCustomerList extends Polymer.Element {
+	static get is() { return 'my-customer-list'; }
+	
+	static get properties(){
+	    return {
+		route: Object
+	    }
+	}
+
+	_goCustomerAdd() {
+	    location.href = "customer-add";
+	}
+    }
+
+    customElements.define(MyCustomerList.is, MyCustomerList);
+  </script>
+</dom-module>

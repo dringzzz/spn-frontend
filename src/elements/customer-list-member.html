@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="local-config.html">
+    
+<dom-module id="customer-list-member">
+  <template>
+    <style is="custom-style">
+      paper-button {
+	  font-family: 'Roboto', 'Noto', sans-serif;
+	  font-weight: normal;
+	  font-size: 14px;
+	  -webkit-font-smoothing: antialiased;
+      }
+      paper-button.indigo {
+	  background-color: var(--paper-indigo-500);
+	  color: white;
+	  --paper-button-raised-keyboard-focus: {
+	      background-color: var(--paper-pink-a200) !important;
+	      color: white !important;
+	  };
+      }
+      paper-button.indigo:hover {
+	  background-color: var(--paper-indigo-400);
+      }
+      paper-button.green {
+	  background-color: var(--paper-green-500);
+	  color: white;
+      }
+      paper-button.green[active] {
+	  background-color: var(--paper-red-500);
+      }
+      paper-button.disabled {
+	  color: white;
+      }
+    </style>
+
+    <iron-ajax
+       id="ajaxgetcustomerlist"
+       handle-as="json"
+       params="{{getparams}}"
+       last-response="{{customerlist}}"
+       with-credentials="true"
+       debounce-duration="300">
+    </iron-ajax>
+    
+    <local-config id="config"></local-config>
+    
+    <div>
+      <div>
+	<template is="dom-repeat" items="{{customerlist.customer_list}}">
+	  <div>
+	    {{ item.name }} :: Edit
+	  </div>
+	</template>
+      </div>
+      
+    </div>
+    
+  </template>
+  <script>
+    class CustomerListMember extends Polymer.Element {
+	static get is() { return 'customer-list-member'; }
+	
+	static get properties() {
+	    return {
+		route: {
+		    type:Object,
+		    notify:true
+		},
+		customerlist:Object,
+		xx:{
+		    type:Object,
+		    computed:'_x(customerlist)'
+		},
+		getparams: {
+                    type: Object,
+		    value: function() {
+			return {'app_id':'1491686390001019'};
+		    }
+                },
+	    }
+	}
+
+	static get observers() {
+            return [
+		'_routeChanged(route)',
+            ];
+	}
+	
+	_routeChanged(route) {
+	    var arr_page_list = ['customer-list'];
+	    var current_path = route['path'].split('/')[1];
+	    
+	    if(arr_page_list.indexOf(current_path) != -1){
+		this.$.ajaxgetcustomerlist.url = this.$.config.merchant_api_get_customer_list_url;
+		this.$.ajaxgetcustomerlist.generateRequest();
+	    }
+	}
+
+	_x(customerlist){
+	    console.log(customerlist);
+	    return customerlist
+	}
+	
+	_goCustomerList(){
+	    location.href = "customer-list";
+	}
+    }
+
+    customElements.define('customer-list-member', CustomerListMember);
+</script>
+</dom-module>

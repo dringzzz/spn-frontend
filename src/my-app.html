@@ -26,6 +26,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="lazy-import" href="my-view2.html">
 <link rel="lazy-import" href="my-view3.html">
 <link rel="lazy-import" href="my-view404.html">
+<link rel="lazy-import" href="my-customer-list.html">
+<link rel="lazy-import" href="my-customer-add.html">
 
 <dom-module id="my-app">
   <template>
@@ -80,6 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+	  <a name="customer-list" href="customer-list">Customer List</a>
           <a name="view1" href="view1">View One</a>
           <a name="view2" href="view2">View Two</a>
           <a name="view3" href="view3">View Three</a>
@@ -101,7 +104,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <my-view1 name="view1"></my-view1>
+	  <my-customer-list name="customer-list"></my-customer-list>
+	  <my-customer-add name="customer-add"></my-customer-add>
+	  <my-view1 name="view1"></my-view1>
           <my-view2 name="view2"></my-view2>
           <my-view3 name="view3"></my-view3>
           <my-view404 name="view404"></my-view404>

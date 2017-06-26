@@ -1,0 +1,172 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="local-config.html">
+    
+<dom-module id="customer-form-add-member">
+  <template>
+    <style is="custom-style">
+      paper-button {
+	  font-family: 'Roboto', 'Noto', sans-serif;
+	  font-weight: normal;
+	  font-size: 14px;
+	  -webkit-font-smoothing: antialiased;
+      }
+      paper-button.indigo {
+	  background-color: var(--paper-indigo-500);
+	  color: white;
+	  --paper-button-raised-keyboard-focus: {
+	      background-color: var(--paper-pink-a200) !important;
+	      color: white !important;
+	  };
+      }
+      paper-button.indigo:hover {
+	  background-color: var(--paper-indigo-400);
+      }
+      paper-button.green {
+	  background-color: var(--paper-green-500);
+	  color: white;
+      }
+      paper-button.green[active] {
+	  background-color: var(--paper-red-500);
+      }
+      paper-button.disabled {
+	  color: white;
+      }
+    </style>
+
+    <iron-ajax
+       id="ajaxgetformsignup"
+       handle-as="json"
+       params="{{getformsignupparams}}"
+       last-response="{{formsignup}}"
+       with-credentials="true"
+       debounce-duration="300">
+    </iron-ajax>
+    
+    <iron-ajax
+       id="ajaxaddcustomer"
+       method="POST"
+       handle-as="json"
+       on-response="_handleAddCustomerResponse"
+       with-credentials="true"
+       debounce-duration="300">
+    </iron-ajax>
+    
+    <local-config id="config"></local-config>
+    
+    <div>
+      <div>
+	<template is="dom-repeat" items="{{formsignup.form_list}}" as="formsign_item">
+	  <template is="dom-if" if="{{_formTypeIsText(formsign_item)}}">
+	    <label>{{formsign_item.name}}</label>
+	    <paper-input name="{{formsign_item.uid}}"
+			 id="{{_genUid(formsign_item.uid)}}"
+			 item-label="{{formsign_item.name}}"
+			 item-required="{{formsign_item.item_required}}">
+	    </paper-input>
+	  </template>
+	</template>
+      </div>
+      
+      <div>
+	<paper-button class="green" on-click="_addCustomer">Submit</paper-button>
+	<paper-button class="indigo" on-click="_goCustomerList">Back</paper-button>
+      </div>
+    </div>
+    
+  </template>
+  <script>
+    class CustomerFormAddMember extends Polymer.Element {
+	static get is() { return 'customer-form-add-member'; }
+	
+	static get properties() {
+	    return {
+		route: {
+		    type:Object,
+		    notify:true
+		},
+		formsignup: Object,
+		formuid: {
+                    type: Object,
+                    computed: 'generateFormUid(formsignup)'
+                },
+		getformsignupparams: {
+                    type: Object,
+		    value: function() {
+			return {'app_id':'1491686390001019'};
+		    }
+                },
+	    }
+	}
+
+	static get observers() {
+            return [
+		'_routeChanged(route)',
+            ];
+	}
+	
+	_routeChanged(route) {
+	    var arr_page_list = ['customer-add'];
+	    var current_path = route['path'].split('/')[1];
+	    
+	    if(arr_page_list.indexOf(current_path) != -1){
+		this.$.ajaxgetformsignup.url = this.$.config.merchant_api_get_form_signup_url;
+		this.$.ajaxgetformsignup.generateRequest();
+	    }
+	}
+
+	generateFormUid(formsignup) {
+	    var formuid = new Object();
+	    var i = 0;
+	    
+            while(formsignup['form_list'][i]) {
+		var uid = "uid-" + formsignup['form_list'][i]['uid'];
+		formuid[uid] = "";
+		i++;
+	    }
+
+            return formuid;
+	}
+
+	_genUid(uid) {
+            return "uid-" + uid;
+	}
+	
+	_formTypeIsText(item) {
+            var arr_type = ["email", "text", "username", "password", "re-password"];
+            return (arr_type.indexOf(item.type) > -1);
+        }
+
+	_addCustomer() {
+	    var body = "app_id=1491686390001019";
+	    
+	    for (var uid in this.formuid) {
+		var index_uid = '#' + uid;
+		var item_form = this.shadowRoot.querySelector(index_uid);
+
+		if(item_form !== null){
+		    body = body + '&' + item_form.name + '=' + item_form.value;
+		}
+	    }
+	    
+	    this.$.ajaxaddcustomer.body = body;
+	    this.$.ajaxaddcustomer.url = this.$.config.merchant_api_add_customer_url;
+	    this.$.ajaxaddcustomer.generateRequest();
+	}
+	
+	_handleAddCustomerResponse(){
+	    location.href = "customer-list";
+	}
+	
+	_goCustomerList(){
+	    location.href = "customer-list";
+	}
+    }
+
+    customElements.define('customer-form-add-member', CustomerFormAddMember);
+</script>
+</dom-module>

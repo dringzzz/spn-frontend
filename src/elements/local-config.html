@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="local-config">
+  <script>
+    class LocalConfig extends Polymer.Element {
+
+	static get is() {
+	    return 'local-config';
+	}
+
+	static get properties(){
+	    return {
+		app_id: {
+		    type: String,
+		    value: '1491686390001019'
+		},
+		merchant_api_url: {
+		    type: String,
+		    value: 'http://merchantapi.shoppening-local.com:8000'
+                },
+		merchant_api_get_customer_list_url: {
+		    type: String,
+		    value() {
+			return this.merchant_api_url + "/customer/list/";
+		    }
+		},
+		merchant_api_get_form_signup_url: {
+		    type: String,
+		    value() {
+			return this.merchant_api_url + "/api/customer/form/signup/";
+		    }
+		},
+		merchant_api_add_customer_url: {
+		    type: String,
+		    value() {
+			return this.merchant_api_url + "/api/customer/add/";
+		    }
+		}
+	    }
+	}
+    }
+
+    customElements.define(LocalConfig.is, LocalConfig);
+
+   </script>
+</dom-module>
+
